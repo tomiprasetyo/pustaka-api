@@ -21,6 +21,18 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
+	book := book.Book{}
+	book.Title = "Refactoring: Improving the Design of Existing Code"
+	book.Description = "is a book written by Martin Fowler. This book improves your legacy code`s design to enhance software maintainability and make current code easier to understand."
+	book.Price = 110000
+	book.Discount = 10000
+	book.Rating = 5
+
+	err = db.Create(&book).Error
+	if err != nil {
+		panic(err)
+	}
+
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
