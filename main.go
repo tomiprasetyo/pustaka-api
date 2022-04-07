@@ -1,19 +1,23 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
 	router := gin.Default()
 
-	router.GET("/", RootHandler)
-	router.GET("/books/:id", BooksHandler)
-	router.GET("/books/:id/:title", BooksHandler)
-	router.GET("/query", QueryHandler)
-	router.POST("/books", PostBooksHandler)
+	v1 := router.Group("/v1")
+
+	v1.GET("/", RootHandler)
+	v1.GET("/books/:id", BooksHandler)
+	v1.GET("/books/:id/:title", BooksHandler)
+	v1.GET("/query", QueryHandler)
+	v1.POST("/books", PostBooksHandler)
 
 	router.Run()
 }
@@ -50,7 +54,17 @@ func PostBooksHandler(ctx *gin.Context) {
 
 	err := ctx.ShouldBindJSON(&bookInput)
 	if err != nil {
-		panic(err)
+
+		errorMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", e.Field(), e.ActualTag())
+			errorMessages = append(errorMessages, errorMessage)
+		}
+
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"errors": errorMessages,
+		})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
