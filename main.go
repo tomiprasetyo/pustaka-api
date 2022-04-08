@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"pustaka-api/book"
 	"pustaka-api/handler"
 
@@ -22,6 +21,8 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
+	// membuat data
+
 	// book := book.Book{}
 	// book.Title = "Refactoring: Improving the Design of Existing Code"
 	// book.Description = "is a book written by Martin Fowler. This book improves your legacy code`s design to enhance software maintainability and make current code easier to understand."
@@ -34,17 +35,39 @@ func main() {
 	// 	panic(err)
 	// }
 
-	var book []book.Book
+	// mengambil data
 
-	err = db.Debug().Find(&book).Error
+	// var book []book.Book
+	var book book.Book
+
+	// db.First(&book) // mengambil data urutan pertama
+	// db.Last(&book) // mengambil data urutan terakhir
+	// db.First(&book, 2) // mengambil data berdasarkan primary key
+	// db.Find(&book) // mengambil semua data objek slice
+	// db.Where("title = ?", "Clean Code").Find() // mengambil data berdasarkan kondisi tertentu
+	err = db.Debug().Where("id = ?", 1).First(&book).Error
 	if err != nil {
 		panic(err)
 	}
 
-	for _, b := range book {
-		fmt.Println("Title : ", b.Title)
-		fmt.Printf("Book Object %v\n", b)
+	// mengambil data slice
+	// for _, b := range book {
+	// 	fmt.Println("Title : ", b.Title)
+	// 	fmt.Printf("Book Object %v\n", b)
+	// }
+
+	// mengupdate data
+
+	book.Title = "Clean Code 2022 Edition"
+	err = db.Save(&book).Error
+	if err != nil {
+		panic(err)
 	}
+
+	// menghapus data
+
+	// db.Delete(&book).Error
+	//
 
 	router := gin.Default()
 
