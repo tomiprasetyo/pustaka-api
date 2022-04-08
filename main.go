@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"pustaka-api/book"
 	"pustaka-api/handler"
 
@@ -21,16 +22,28 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
-	book := book.Book{}
-	book.Title = "Refactoring: Improving the Design of Existing Code"
-	book.Description = "is a book written by Martin Fowler. This book improves your legacy code`s design to enhance software maintainability and make current code easier to understand."
-	book.Price = 110000
-	book.Discount = 10000
-	book.Rating = 5
+	// book := book.Book{}
+	// book.Title = "Refactoring: Improving the Design of Existing Code"
+	// book.Description = "is a book written by Martin Fowler. This book improves your legacy code`s design to enhance software maintainability and make current code easier to understand."
+	// book.Price = 110000
+	// book.Discount = 10000
+	// book.Rating = 5
 
-	err = db.Create(&book).Error
+	// err = db.Create(&book).Error
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	var book []book.Book
+
+	err = db.Debug().Find(&book).Error
 	if err != nil {
 		panic(err)
+	}
+
+	for _, b := range book {
+		fmt.Println("Title : ", b.Title)
+		fmt.Printf("Book Object %v\n", b)
 	}
 
 	router := gin.Default()
