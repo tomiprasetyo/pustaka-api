@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"pustaka-api/book"
 	"pustaka-api/handler"
 
@@ -21,53 +22,27 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
-	// membuat data
+	bookRepository := book.NewRepository(db)
 
-	// book := book.Book{}
-	// book.Title = "Refactoring: Improving the Design of Existing Code"
-	// book.Description = "is a book written by Martin Fowler. This book improves your legacy code`s design to enhance software maintainability and make current code easier to understand."
-	// book.Price = 110000
-	// book.Discount = 10000
-	// book.Rating = 5
+	// books, err := bookRepository.FindAll()
+	// book, err := bookRepository.FindByID(2)
+	book := book.Book{
+		Title:       "Enterprise Integration Patterns",
+		Description: "This book offers an invaluable catalog of various pattern suggestions with real-world solutions that help you design effective messaging solutions for your enterprise.",
+		Price:       95000,
+		Rating:      4,
+		Discount:    0,
+	}
 
-	// err = db.Create(&book).Error
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// mengambil data
-
-	// var book []book.Book
-	var book book.Book
-
-	// db.First(&book) // mengambil data urutan pertama
-	// db.Last(&book) // mengambil data urutan terakhir
-	// db.First(&book, 2) // mengambil data berdasarkan primary key
-	// db.Find(&book) // mengambil semua data objek slice
-	// db.Where("title = ?", "Clean Code").Find() // mengambil data berdasarkan kondisi tertentu
-	err = db.Debug().Where("id = ?", 1).First(&book).Error
+	newBook, err := bookRepository.Create(book)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Success create new database", newBook)
 
-	// mengambil data slice
-	// for _, b := range book {
-	// 	fmt.Println("Title : ", b.Title)
-	// 	fmt.Printf("Book Object %v\n", b)
+	// for _, book := range books {
+	// 	fmt.Println("Title :", book.Title)
 	// }
-
-	// mengupdate data
-
-	book.Title = "Clean Code 2022 Edition"
-	err = db.Save(&book).Error
-	if err != nil {
-		panic(err)
-	}
-
-	// menghapus data
-
-	// db.Delete(&book).Error
-	//
 
 	router := gin.Default()
 
