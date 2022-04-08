@@ -23,26 +23,18 @@ func main() {
 	db.AutoMigrate(&book.Book{})
 
 	bookRepository := book.NewRepository(db)
+	bookService := book.NewService(bookRepository)
 
-	// books, err := bookRepository.FindAll()
-	// book, err := bookRepository.FindByID(2)
-	book := book.Book{
-		Title:       "Enterprise Integration Patterns",
-		Description: "This book offers an invaluable catalog of various pattern suggestions with real-world solutions that help you design effective messaging solutions for your enterprise.",
-		Price:       95000,
-		Rating:      4,
-		Discount:    0,
+	bookRequest := book.BookRequest{
+		Title: "Refactoring",
+		Price: 90000,
 	}
 
-	newBook, err := bookRepository.Create(book)
+	newBook, err := bookService.Create(bookRequest)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Success create new database", newBook)
-
-	// for _, book := range books {
-	// 	fmt.Println("Title :", book.Title)
-	// }
 
 	router := gin.Default()
 
