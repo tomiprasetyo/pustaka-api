@@ -17,25 +17,30 @@ func NewBookHandler(bookService book.Service) *bookHandler {
 	return &bookHandler{bookService}
 }
 
-func (h *bookHandler) RootHandler(ctx *gin.Context) {
+func (h *bookHandler) GetBooks(ctx *gin.Context) {
+	books, err := h.bookService.FindAll()
+	if err != nil {
+		panic(err)
+	}
+
+	var booksResponse []book.BookResponse
+
+	for _, b := range books {
+		bookResponse := book.BookResponse{
+			ID:          b.ID,
+			Title:       b.Title,
+			Price:       b.Price,
+			Description: b.Description,
+			Rating:      b.Rating,
+			Discount:    b.Discount,
+		}
+
+		booksResponse = append(booksResponse, bookResponse)
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
-		"name":   "Tomi Prasetyo",
-		"status": "OK",
+		"data": booksResponse,
 	})
-}
-
-func (h *bookHandler) BooksHandler(ctx *gin.Context) {
-	id := ctx.Param("id")
-	title := ctx.Param("title")
-
-	ctx.JSON(http.StatusOK, gin.H{"id": id, "title": title})
-}
-
-func (h *bookHandler) QueryHandler(ctx *gin.Context) {
-	title := ctx.Query("title")
-	price := ctx.Query("price")
-
-	ctx.JSON(http.StatusOK, gin.H{"title": title, "price": price})
 }
 
 func (h *bookHandler) PostBooksHandler(ctx *gin.Context) {

@@ -29,6 +29,11 @@ func (s *service) FindByID(ID int) (Book, error) {
 }
 
 func (s *service) Create(bookRequest BookRequest) (Book, error) {
+
+	// price := bookRequest.Price
+	// rating := bookRequest.Rating
+	// discount := bookRequest.Discount
+
 	book := Book{
 		Title:       bookRequest.Title,
 		Price:       bookRequest.Price,
